@@ -5,7 +5,7 @@ require 'spec_helper'
 describe 'network', :type => 'class' do
 
   context 'on a non-supported operatingsystem' do
-    let(:facts) {{ :os => { :family => 'foo' }}}
+    let(:facts) {{ :osfamily => 'foo' }}
 
     it 'should fail' do
       expect {
@@ -15,7 +15,7 @@ describe 'network', :type => 'class' do
   end
 
   context 'on a supported operatingsystem' do
-    let(:facts) {{ :os => { :family => 'RedHat' }}}
+    let(:facts) {{ :osfamily => 'RedHat' }}
 
     it { should contain_service('network').with(
       :ensure     => 'running',

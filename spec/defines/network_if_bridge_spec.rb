@@ -12,7 +12,7 @@ describe 'network::if::bridge', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-eth77')}.to raise_error(Puppet::Error, /expects a match for Enum\['down', 'up'\]/)
+      expect {should contain_file('ifcfg-eth77')}.to raise_error(Puppet::Error, /\$ensure must be either "up" or "down"./)
     end
   end
 
@@ -24,16 +24,8 @@ describe 'network::if::bridge', :type => 'define' do
     }
     end
     let :facts do {
-      :os         => {
-        :family => 'RedHat'
-      },
-      :networking => {
-        :interfaces => {
-          :eth1 => {
-            :mac => 'fe:fe:fe:aa:aa:aa'
-          }
-        }
-      }
+      :osfamily        => 'RedHat',
+      :macaddress_eth1 => 'fe:fe:fe:aa:aa:aa',
     }
     end
     it { should contain_file('ifcfg-eth1').with(
@@ -70,16 +62,8 @@ describe 'network::if::bridge', :type => 'define' do
     }
     end
     let :facts do {
-      :os         => {
-        :family => 'RedHat'
-      },
-      :networking => {
-        :interfaces => {
-          :eth1 => {
-            :mac => 'fe:fe:fe:aa:aa:aa'
-          }
-        }
-      }
+      :osfamily        => 'RedHat',
+      :macaddress_eth1 => 'fe:fe:fe:aa:aa:aa',
     }
     end
     it { should contain_file('ifcfg-eth1').with(

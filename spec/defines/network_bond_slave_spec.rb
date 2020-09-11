@@ -12,32 +12,21 @@ describe 'network::bond::slave', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-eth6')}.to raise_error(Puppet::Error, /expects a match for Stdlib::MAC/)
+      expect {should contain_file('ifcfg-eth6')}.to raise_error(Puppet::Error, /123456 is not a MAC address./)
     end
   end
 
   context 'required parameters' do
-    let(:pre_condition) { "file { 'ifcfg-bond0': }" }
     let(:title) { 'eth1' }
     let :params do {
       :master     => 'bond0',
     }
     end
     let :facts do {
-      :os         => {
-        :family => 'RedHat',
-        :name   => 'RedHat',
-        :release => {
-          :major => '6',
-        }
-      },
-      :networking => {
-        :interfaces => {
-          :eth1 => {
-            :mac => 'fe:fe:fe:aa:aa:aa'
-          }
-        }
-      }
+      :osfamily        => 'RedHat',
+      :operatingsystem        => 'RedHat',
+      :operatingsystemrelease => '6.0',
+      :macaddress_eth1 => 'fe:fe:fe:aa:aa:aa',
     }
     end
     it { should contain_file('ifcfg-eth1').with(
@@ -62,7 +51,6 @@ describe 'network::bond::slave', :type => 'define' do
   end
 
   context 'required parameters, restart => false' do
-    let(:pre_condition) { "file { 'ifcfg-bond0': }" }
     let(:title) { 'eth1' }
     let :params do {
       :macaddress => 'fe:fe:fe:aa:aa:a1',
@@ -71,14 +59,8 @@ describe 'network::bond::slave', :type => 'define' do
     }
     end
     let :facts do {
-      :os         => { :family => 'RedHat' },
-      :networking => {
-        :interfaces => {
-          :eth1 => {
-            :mac => 'fe:fe:fe:aa:aa:aa'
-          }
-        }
-      }
+      :osfamily        => 'RedHat',
+      :macaddress_eth1 => 'fe:fe:fe:aa:aa:aa',
     }
     end
     it { should contain_file('ifcfg-eth1').with(
@@ -103,7 +85,6 @@ describe 'network::bond::slave', :type => 'define' do
   end
 
   context 'optional parameters' do
-    let(:pre_condition) { "file { 'ifcfg-bond0': }" }
     let(:title) { 'eth3' }
     let :params do {
       :macaddress   => 'ef:ef:ef:ef:ef:ef',
@@ -116,20 +97,10 @@ describe 'network::bond::slave', :type => 'define' do
     }
     end
     let :facts do {
-      :os         => {
-        :family => 'RedHat',
-        :name   => 'RedHat',
-        :release => {
-          :major => '6',
-        }
-      },
-      :networking => {
-        :interfaces => {
-          :eth3 => {
-            :mac => 'fe:fe:fe:aa:aa:aa'
-          }
-        }
-      }
+      :osfamily        => 'RedHat',
+      :operatingsystem        => 'RedHat',
+      :operatingsystemrelease => '6.0',
+      :macaddress_eth3 => 'fe:fe:fe:aa:aa:aa',
     }
     end
     it { should contain_file('ifcfg-eth3').with(

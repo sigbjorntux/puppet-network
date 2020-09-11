@@ -34,17 +34,26 @@
 # Copyright (C) 2013 Mike Arnold, unless otherwise noted.
 #
 define network::bond::bridge (
-  Enum['up', 'down'] $ensure,
-  String $bridge,
-  Optional[String] $mtu = undef,
-  Optional[String] $ethtool_opts = undef,
-  String $bonding_opts = 'miimon=100',
-  Boolean $restart = true,
+  $ensure,
+  $bridge,
+  $mtu = undef,
+  $ethtool_opts = undef,
+  $bonding_opts = 'miimon=100',
+  $restart = true,
 ) {
+  # Validate our regular expressions
+  $states = [ '^up$', '^down$' ]
+  validate_re($ensure, $states, '$ensure must be either "up" or "down".')
 
   network_if_base { $title:
     ensure       => $ensure,
+    ipaddress    => '',
+    netmask      => '',
+    gateway      => '',
+    macaddress   => '',
     bootproto    => 'none',
+    ipv6address  => '',
+    ipv6gateway  => '',
     mtu          => $mtu,
     ethtool_opts => $ethtool_opts,
     bonding_opts => $bonding_opts,
@@ -54,10 +63,10 @@ define network::bond::bridge (
 
   # Only install "alias bondN bonding" on old OSs that support
   # /etc/modprobe.conf.
-  case $::os['name'] {
+  case $::operatingsystem {
     /^(RedHat|CentOS|OEL|OracleLinux|SLC|Scientific)$/: {
-      case $::os['release']['major'] {
-        /^[45]$/: {
+      case $::operatingsystemrelease {
+        /^[45]/: {
           augeas { "modprobe.conf_${title}":
             context => '/files/etc/modprobe.conf',
             changes => [
@@ -72,7 +81,7 @@ define network::bond::bridge (
       }
     }
     'Fedora': {
-      case $::os['release']['major'] {
+      case $::operatingsystemrelease {
         /^(1|2|3|4|5|6|7|8|9|10|11)$/: {
           augeas { "modprobe.conf_${title}":
             context => '/files/etc/modprobe.conf',

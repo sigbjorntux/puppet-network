@@ -9,5 +9,5 @@ network::route { 'eth2':
 
 network::if::dynamic { 'eth2':
   ensure     => 'down',
-  macaddress => $::networking['interfaces']['eth2']['mac'],
+  macaddress => $::macaddress_eth2,
 }
