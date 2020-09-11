@@ -128,12 +128,6 @@ Normal interface - promiscuous:
       ensure => 'up',
     }
 
-Normal interface - none:
-
-    network::if::none { 'eth1':
-      ensure => 'up',
-    }
-
 Aliased interface IPv4:
 
     network::alias { 'eth0:1':
