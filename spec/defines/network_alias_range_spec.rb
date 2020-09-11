@@ -14,7 +14,7 @@ describe 'network::alias::range', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-bond77-range0')}.to raise_error(Puppet::Error, /expects a match for Enum\['absent', 'down', 'up'\]/)
+      expect {should contain_file('ifcfg-bond77-range0')}.to raise_error(Puppet::Error, /\$ensure must be either "up", "down", or "absent"./)
     end
   end
 
@@ -28,7 +28,7 @@ describe 'network::alias::range', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-bond77-range0')}.to raise_error(Puppet::Error, /expects a match for IP::Address::V4::NoSubnet /)
+      expect {should contain_file('ifcfg-bond77-range0')}.to raise_error(Puppet::Error, /notAnIP is not an IP address./)
     end
   end
 
@@ -42,13 +42,12 @@ describe 'network::alias::range', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-bond77-range0')}.to raise_error(Puppet::Error, /expects a match for IP::Address::V4::NoSubnet /)
+      expect {should contain_file('ifcfg-bond77-range0')}.to raise_error(Puppet::Error, /notAnIP is not an IP address./)
     end
   end
 
 
   context 'required parameters: ensure => up' do
-    let(:pre_condition) { "file { 'ifcfg-eth99': }" }
     let(:title) { 'eth99' }
     let :params do {
       :ensure          => 'up',
@@ -57,7 +56,7 @@ describe 'network::alias::range', :type => 'define' do
       :clonenum_start  => '3',
     }
     end
-    let(:facts) {{ :os => { :family => 'RedHat' }}}
+    let(:facts) {{ :osfamily => 'RedHat' }}
     it { should contain_file('ifcfg-eth99-range3').with(
       :ensure => 'present',
       :mode   => '0644',
@@ -81,7 +80,6 @@ describe 'network::alias::range', :type => 'define' do
   end
 
   context 'required parameters: ensure => up, restart => false' do
-    let(:pre_condition) { "file { 'ifcfg-eth99': }" }
     let(:title) { 'eth99' }
     let :params do {
       :ensure          => 'up',
@@ -91,7 +89,7 @@ describe 'network::alias::range', :type => 'define' do
       :restart         => false,
     }
     end
-    let(:facts) {{ :os => { :family => 'RedHat' }}}
+    let(:facts) {{ :osfamily => 'RedHat' }}
     it { should contain_file('ifcfg-eth99-range3').with(
       :ensure => 'present',
       :mode   => '0644',
@@ -114,7 +112,6 @@ describe 'network::alias::range', :type => 'define' do
   end
 
   context 'required parameters: ensure => down' do
-    let(:pre_condition) { "file { 'ifcfg-bond7': }" }
     let(:title) { 'bond7' }
     let :params do {
       :ensure          => 'down',
@@ -124,7 +121,7 @@ describe 'network::alias::range', :type => 'define' do
       :noaliasrouting  => true,
     }
     end
-    let(:facts) {{ :os => { :family => 'RedHat' }}}
+    let(:facts) {{ :osfamily => 'RedHat' }}
     it { should contain_file('ifcfg-bond7-range9').with(
       :ensure => 'present',
       :mode   => '0644',
@@ -147,7 +144,6 @@ describe 'network::alias::range', :type => 'define' do
   end
 
   context 'required parameters: ensure => absent' do
-    let(:pre_condition) { "file { 'ifcfg-bond6': }" }
     let(:title) { 'bond6' }
     let :params do {
       :ensure          => 'absent',
@@ -156,7 +152,7 @@ describe 'network::alias::range', :type => 'define' do
       :clonenum_start  => '9',
     }
     end
-    let(:facts) {{ :os => { :family => 'RedHat' }}}
+    let(:facts) {{ :osfamily => 'RedHat' }}
     it { should contain_file('ifcfg-bond6-range9').with(
       :ensure => 'absent',
       :path   => '/etc/sysconfig/network-scripts/ifcfg-bond6-range9',
@@ -166,7 +162,6 @@ describe 'network::alias::range', :type => 'define' do
   end
 
   context 'optional parameters' do
-    let(:pre_condition) { "file { 'ifcfg-eth8': }" }
     let(:title) { 'eth8' }
     let :params do {
       :ensure          => 'up',
@@ -179,7 +174,7 @@ describe 'network::alias::range', :type => 'define' do
       :arpcheck        => false,
     }
     end
-    let(:facts) {{ :os => { :family => 'RedHat' }}}
+    let(:facts) {{ :osfamily => 'RedHat' }}
     it { should contain_file('ifcfg-eth8-range9').with(
       :ensure => 'present',
       :mode   => '0644',

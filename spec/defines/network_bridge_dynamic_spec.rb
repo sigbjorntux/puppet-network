@@ -11,7 +11,7 @@ describe 'network::bridge::dynamic', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-br77')}.to raise_error(Puppet::Error, /expects a match for Enum\['down', 'up'\]/)
+      expect {should contain_file('ifcfg-br77')}.to raise_error(Puppet::Error, /\$ensure must be either "up" or "down"./)
     end
   end
 
@@ -23,7 +23,7 @@ describe 'network::bridge::dynamic', :type => 'define' do
     }
     end
     it 'should fail' do
-      expect {should contain_file('ifcfg-br77')}.to raise_error(Puppet::Error, /expects a Boolean/)
+      expect {should contain_file('ifcfg-br77')}.to raise_error(Puppet::Error, /"notABool" is not a boolean./)
     end
   end
 
@@ -34,13 +34,7 @@ describe 'network::bridge::dynamic', :type => 'define' do
     }
     end
     let :facts do {
-      :os => {
-        :family => 'RedHat',
-        :name   => 'RedHat',
-        :release => {
-          :major => '6',
-        }
-      }
+      :osfamily => 'RedHat',
     }
     end
     it { should contain_file('ifcfg-br1').with(
@@ -76,9 +70,7 @@ describe 'network::bridge::dynamic', :type => 'define' do
     }
     end
     let :facts do {
-      :os => {
-        :family => 'RedHat'
-      }
+      :osfamily => 'RedHat',
     }
     end
     it { should contain_file('ifcfg-br1').with(
@@ -117,9 +109,7 @@ describe 'network::bridge::dynamic', :type => 'define' do
     }
     end
     let :facts do {
-      :os => {
-        :family => 'RedHat'
-      }
+      :osfamily => 'RedHat',
     }
     end
     it { should contain_file('ifcfg-br1').with(
