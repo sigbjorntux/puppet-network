@@ -47,6 +47,42 @@ describe 'network::alias::range', :type => 'define' do
   end
 
 
+  context 'RHEL8 required parameters: ensure => up' do
+    let(:pre_condition) { "file { 'ifcfg-eth99': }" }
+    let(:title) { 'eth99' }
+    let :params do {
+      :ensure          => 'up',
+      :ipaddress_start => '1.2.3.99',
+      :ipaddress_end   => '1.2.3.200',
+      :clonenum_start  => '3',
+    }
+    end
+    let(:facts) {{
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '8.0',
+    }}
+    it { should contain_file('ifcfg-eth99-range3').with(
+      :ensure => 'present',
+      :mode   => '0644',
+      :owner  => 'root',
+      :group  => 'root',
+      :path   => '/etc/sysconfig/network-scripts/ifcfg-eth99-range3',
+      :notify => 'Class[Network::Service]'
+    )}
+    it 'should contain File[ifcfg-eth99-range3] with required contents' do
+      verify_contents(catalogue, 'ifcfg-eth99-range3', [
+        'IPADDR_START=1.2.3.99',
+        'IPADDR_END=1.2.3.200',
+        'CLONENUM_START=3',
+        'NO_ALIASROUTING=no',
+        'ONPARENT=yes',
+        'NM_CONTROLLED=yes',
+      ])
+    end
+    it { should contain_exec('restart_network') }
+    it { is_expected.to contain_file('ifcfg-eth99-range3').that_notifies('Class[Network::Service]') }
+  end
+
   context 'required parameters: ensure => up' do
     let(:title) { 'eth99' }
     let :params do {
@@ -56,14 +92,17 @@ describe 'network::alias::range', :type => 'define' do
       :clonenum_start  => '3',
     }
     end
-    let(:facts) {{ :osfamily => 'RedHat' }}
+    let(:facts) {{
+      :osfamily => 'RedHat',
+      :operatingsystemrelease => '7.0',
+    }}
     it { should contain_file('ifcfg-eth99-range3').with(
       :ensure => 'present',
       :mode   => '0644',
       :owner  => 'root',
       :group  => 'root',
       :path   => '/etc/sysconfig/network-scripts/ifcfg-eth99-range3',
-      :notify => 'Service[network]'
+      :notify => 'Class[Network::Service]'
     )}
     it 'should contain File[ifcfg-eth99-range3] with required contents' do
       verify_contents(catalogue, 'ifcfg-eth99-range3', [
@@ -76,7 +115,7 @@ describe 'network::alias::range', :type => 'define' do
       ])
     end
     it { should contain_service('network') }
-    it { is_expected.to contain_file('ifcfg-eth99-range3').that_notifies('Service[network]') }
+    it { is_expected.to contain_file('ifcfg-eth99-range3').that_notifies('Class[Network::Service]') }
   end
 
   context 'required parameters: ensure => up, restart => false' do
@@ -89,7 +128,10 @@ describe 'network::alias::range', :type => 'define' do
       :restart         => false,
     }
     end
-    let(:facts) {{ :osfamily => 'RedHat' }}
+    let(:facts) {{ 
+      :osfamily => 'RedHat', 
+      :operatingsystemrelease => '7.0', 
+    }}
     it { should contain_file('ifcfg-eth99-range3').with(
       :ensure => 'present',
       :mode   => '0644',
@@ -108,7 +150,7 @@ describe 'network::alias::range', :type => 'define' do
       ])
     end
     it { should contain_service('network') }
-    it { is_expected.to_not contain_file('ifcfg-eth99-range3').that_notifies('Service[network]') }
+    it { is_expected.to_not contain_file('ifcfg-eth99-range3').that_notifies('Class[Network::Service]') }
   end
 
   context 'required parameters: ensure => down' do
@@ -121,14 +163,17 @@ describe 'network::alias::range', :type => 'define' do
       :noaliasrouting  => true,
     }
     end
-    let(:facts) {{ :osfamily => 'RedHat' }}
+    let(:facts) {{ 
+      :osfamily => 'RedHat', 
+      :operatingsystemrelease => '7.0', 
+    }}
     it { should contain_file('ifcfg-bond7-range9').with(
       :ensure => 'present',
       :mode   => '0644',
       :owner  => 'root',
       :group  => 'root',
       :path   => '/etc/sysconfig/network-scripts/ifcfg-bond7-range9',
-      :notify => 'Service[network]'
+      :notify => 'Class[Network::Service]'
     )}
     it 'should contain File[ifcfg-bond7-range9] with required contents' do
       verify_contents(catalogue, 'ifcfg-bond7-range9', [
@@ -152,11 +197,14 @@ describe 'network::alias::range', :type => 'define' do
       :clonenum_start  => '9',
     }
     end
-    let(:facts) {{ :osfamily => 'RedHat' }}
+    let(:facts) {{ 
+      :osfamily => 'RedHat', 
+      :operatingsystemrelease => '7.0', 
+    }}
     it { should contain_file('ifcfg-bond6-range9').with(
       :ensure => 'absent',
       :path   => '/etc/sysconfig/network-scripts/ifcfg-bond6-range9',
-      :notify => 'Service[network]'
+      :notify => 'Class[Network::Service]'
     )}
     it { should contain_service('network') }
   end
@@ -174,14 +222,17 @@ describe 'network::alias::range', :type => 'define' do
       :arpcheck        => false,
     }
     end
-    let(:facts) {{ :osfamily => 'RedHat' }}
+    let(:facts) {{ 
+      :osfamily => 'RedHat', 
+      :operatingsystemrelease => '7.0', 
+    }}
     it { should contain_file('ifcfg-eth8-range9').with(
       :ensure => 'present',
       :mode   => '0644',
       :owner  => 'root',
       :group  => 'root',
       :path   => '/etc/sysconfig/network-scripts/ifcfg-eth8-range9',
-      :notify => 'Service[network]'
+      :notify => 'Class[Network::Service]'
     )}
     it 'should contain File[ifcfg-eth8-range9] with required contents' do
       verify_contents(catalogue, 'ifcfg-eth8-range9', [
